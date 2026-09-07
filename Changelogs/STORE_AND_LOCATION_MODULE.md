@@ -74,3 +74,66 @@ Implemented the **Store / Shop & Nearby Available Sellers / Stores Discovery** m
 - Follows centralized `LeafLocation` and `LocationScreen` location management.
 - Complete Light/Dark mode compatibility using `context.colorScheme`.
 - Zero breaking changes to existing classified ads, chat, or user profiles.
+
+
+# Mobile App Changelog: Store & Nearby Sellers Discovery Module
+
+**Date:** 2026-09-08  
+**Project:** Eclassify Classified Mobile App (Flutter)  
+**Version:** 3.1.0  
+**Compatibility:** Fully compatible with Android and iOS, supporting Light & Dark themes and Centralized Location Selection.
+
+---
+
+## 1. Overview of Changes
+
+This update introduces full Store / Shop & Geolocation Discovery support to the Flutter mobile application, matching enterprise-grade production standards with Bloc/Cubit state management, comprehensive error handling, and modern UI/UX design.
+
+---
+
+## 2. Architecture & Components Added
+
+### 2.1 State Management (Cubits) & Repository
+- **`StoreRepository`** (`lib/features/store/repository/store_repository.dart`):
+  - `getStores()`: Fetches nearby stores with coordinates, radius, location hierarchy, search keyword, and sort options.
+  - `getStoreDetail()`: Fetches complete store profile, distance, active item catalog, and ratings/reviews.
+  - `setupStore()`: Multipart form data submission for store creation and updates (supporting logo and banner file uploads).
+  - `getMyStore()`: Retrieves authenticated user's existing store profile.
+  - `toggleStoreStatus()`: Instantly toggles active/inactive store visibility.
+- **`NearbyStoresCubit`**: Handles loading, pagination, sorting, and radius filtering for nearby stores.
+- **`StoreDetailsCubit`**: Fetches and caches store profile details and catalog.
+- **`StoreSetupCubit`**: Manages store setup/edit form submission and status updates.
+- **`MyStoreCubit`**: Central session cubit tracking the user's store state and synchronizing across profile screens.
+
+### 2.2 Screens & Widgets
+- **`NearbyStoresScreen`** (`lib/features/store/screens/nearby_stores_screen.dart`):
+  - Search bar with debouncing.
+  - Filter and sort bottom sheet.
+  - Radius slider.
+  - Location chip linked to centralized `Routes.locationScreen`.
+  - Responsive store card list with pull-to-refresh and infinite scroll pagination.
+- **`StoreDetailsScreen`** (`lib/features/store/screens/store_details_screen.dart`):
+  - Dynamic sliver app bar with cover banner and store logo avatar.
+  - Official verification badge and distance counter.
+  - Tabbed interface:
+    1. **Items**: Grid of active classified listings by this store.
+    2. **About**: Business description, address, map link, working hours table, and contact buttons (Call, Email).
+    3. **Reviews**: Customer reviews with star rating breakdown.
+- **`StoreSetupScreen`** (`lib/features/store/screens/store_setup_screen.dart`):
+  - Cover banner and logo image pickers with live previews.
+  - Centralized location picker returning `LeafLocation`.
+  - Working days multi-select filter chips.
+  - Pre-populates existing store data automatically when editing.
+- **`StoreCardWidget`** (`lib/features/store/widgets/store_card_widget.dart`):
+  - Reusable store card with banner, avatar, verified badge, rating summary, and distance indicator.
+
+---
+
+## 3. Bug Fixes & Improvements
+
+1. **`AppButton` Assertion Error Fix**: Resolved `AppButton requires exactly one of title or child` assertion failure during loading state by ensuring mutually exclusive arguments.
+2. **Sort Parameter Alignment**: Fixed sort parameter values sent to `/api/get-stores` to match backend supported keys (`nearest`, `top_rated`, `newest`, `popular`).
+3. **JSON Response Parsing**: Resolved type casting exception in `StoreRepository.getStoreDetail` to safely parse map responses.
+4. **My Store Edit State Pre-population**: Fixed issue where clicking "My Store" after creating a store opened a blank form instead of populating existing store details for editing.
+5. **Verified Store Protection**: Added official verified banner badge and locked all form inputs to `readOnly`, disabled image/location pickers, and hid the save button when `isVerified == true`.
+6. **Localization**: Added full set of store-related translation keys to `assets/languages/language.json`.

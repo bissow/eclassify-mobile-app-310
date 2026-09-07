@@ -119,6 +119,25 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen>
                       ),
                     ),
                     actions: [
+                      if (AppSession.currentUser?.id != null && AppSession.currentUser!.id == store.userId) ...[
+                        CircleAvatar(
+                          backgroundColor: Colors.black.withValues(alpha: 0.5),
+                          child: IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.white, size: 18),
+                            onPressed: () async {
+                              final updated = await Navigator.pushNamed(
+                                context,
+                                Routes.storeSetup,
+                                arguments: store,
+                              );
+                              if (updated != null && mounted) {
+                                _loadStoreDetails();
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
                       CircleAvatar(
                         backgroundColor: Colors.black.withValues(alpha: 0.5),
                         child: IconButton(

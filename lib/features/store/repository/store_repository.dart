@@ -81,10 +81,22 @@ class StoreRepository {
         queryParameters: queryParams,
       );
 
-      final storeData = response['data'] as Map<String, dynamic>;
-      final store = StoreModel.fromJson(storeData);
+      final responseData = response['data'] as Map<String, dynamic>;
+      
+      final Map<String, dynamic> storeJson = responseData['store'] is Map
+          ? Map<String, dynamic>.from(responseData['store'] as Map)
+          : responseData;
+      final store = StoreModel.fromJson(storeJson);
 
-      final rawItems = storeData['items'] as List? ?? [];
+      List rawItems = [];
+      if (responseData['items'] is Map && (responseData['items'] as Map)['data'] is List) {
+        rawItems = (responseData['items'] as Map)['data'] as List;
+      } else if (responseData['items'] is List) {
+        rawItems = responseData['items'] as List;
+      } else if (storeJson['items'] is List) {
+        rawItems = storeJson['items'] as List;
+      }
+
       final items = JsonHelper.parseList(
         rawItems,
         Item.fromJson,
@@ -107,7 +119,16 @@ class StoreRepository {
         return null;
       }
 
-      return StoreModel.fromJson(response['data'] as Map<String, dynamic>);
+      final data = response['data'] as Map<String, dynamic>;
+      if (data.containsKey('has_store') && data['has_store'] == false) {
+        return null;
+      }
+
+      final Map<String, dynamic> storeData = data['store'] is Map
+          ? Map<String, dynamic>.from(data['store'] as Map)
+          : data;
+
+      return StoreModel.fromJson(storeData);
     } on Exception catch (e, stack) {
       Log.error('Error in getMyStore: $e', e, stack);
       rethrow;
@@ -141,7 +162,12 @@ class StoreRepository {
         parameter: formDataMap,
       );
 
-      return StoreModel.fromJson(response['data'] as Map<String, dynamic>);
+      final data = response['data'] as Map<String, dynamic>;
+      final Map<String, dynamic> storeData = data['store'] is Map
+          ? Map<String, dynamic>.from(data['store'] as Map)
+          : data;
+
+      return StoreModel.fromJson(storeData);
     } on Exception catch (e, stack) {
       Log.error('Error in setupStore: $e', e, stack);
       rethrow;

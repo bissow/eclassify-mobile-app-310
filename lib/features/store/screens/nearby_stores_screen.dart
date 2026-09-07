@@ -36,7 +36,7 @@ class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
   Timer? _searchDebounce;
 
   num _selectedRadius = 25;
-  String _selectedSort = 'distance_asc';
+  String _selectedSort = 'nearest';
 
   final List<num> _radiusOptions = [5, 10, 25, 50, 100];
 

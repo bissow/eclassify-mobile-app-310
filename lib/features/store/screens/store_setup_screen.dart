@@ -14,6 +14,8 @@ import 'package:eClassify/features/location/models/leaf_location.dart';
 import 'package:eClassify/features/store/cubits/my_store_cubit.dart';
 import 'package:eClassify/features/store/cubits/store_setup_cubit.dart';
 import 'package:eClassify/features/store/models/store_model.dart';
+import 'package:eClassify/features/store/repository/store_repository.dart';
+import 'package:eClassify/features/user_profile/cubits/user_profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -51,6 +53,10 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
 
   File? _logoFile;
   File? _bannerFile;
+  String? _existingLogoUrl;
+  String? _existingBannerUrl;
+  StoreModel? _existingStore;
+  bool _isInitialLoading = false;
   LeafLocation? _selectedLocation;
   List<String> _selectedDays = [];
 
@@ -67,24 +73,43 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
   @override
   void initState() {
     super.initState();
-    final s = widget.existingStore;
-    _nameController = TextEditingController(text: s?.name ?? '');
-    _descController = TextEditingController(text: s?.description ?? '');
-    _contactController = TextEditingController(text: s?.contact ?? '');
-    _emailController = TextEditingController(text: s?.email ?? '');
-    _addressController = TextEditingController(text: s?.address ?? '');
-    _websiteController = TextEditingController(text: s?.website ?? '');
-    _taxNumberController = TextEditingController(text: s?.taxNumber ?? '');
-    _openingTimeController = TextEditingController(text: s?.openingTime ?? '09:00');
-    _closingTimeController = TextEditingController(text: s?.closingTime ?? '20:00');
+    _nameController = TextEditingController();
+    _descController = TextEditingController();
+    _contactController = TextEditingController();
+    _emailController = TextEditingController();
+    _addressController = TextEditingController();
+    _websiteController = TextEditingController();
+    _taxNumberController = TextEditingController();
+    _openingTimeController = TextEditingController(text: '09:00');
+    _closingTimeController = TextEditingController(text: '20:00');
+    _selectedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    if (s?.workingDays != null) {
-      _selectedDays = List<String>.from(s!.workingDays!);
+    if (widget.existingStore != null) {
+      _populateFromStore(widget.existingStore!);
     } else {
-      _selectedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkAndFetchStore();
+      });
+    }
+  }
+
+  void _populateFromStore(StoreModel s) {
+    _existingStore = s;
+    _nameController.text = s.name;
+    _descController.text = s.description ?? '';
+    _contactController.text = s.contact ?? '';
+    _emailController.text = s.email ?? '';
+    _addressController.text = s.address ?? '';
+    _websiteController.text = s.website ?? '';
+    _taxNumberController.text = s.taxNumber ?? '';
+    _openingTimeController.text = s.openingTime ?? '09:00';
+    _closingTimeController.text = s.closingTime ?? '20:00';
+
+    if (s.workingDays != null && s.workingDays!.isNotEmpty) {
+      _selectedDays = List<String>.from(s.workingDays!);
     }
 
-    if (s != null && s.latitude != null && s.longitude != null) {
+    if (s.latitude != null && s.longitude != null) {
       _selectedLocation = LeafLocation(
         latitude: s.latitude,
         longitude: s.longitude,
@@ -94,6 +119,32 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
         primaryText: s.city ?? s.address,
         secondaryText: s.state,
       );
+    }
+
+    _existingLogoUrl = s.logo;
+    _existingBannerUrl = s.banner;
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _checkAndFetchStore() async {
+    final myStoreState = context.read<MyStoreCubit>().state;
+    if (myStoreState is MyStoreSuccess && myStoreState.store != null) {
+      _populateFromStore(myStoreState.store!);
+      return;
+    }
+
+    setState(() => _isInitialLoading = true);
+    try {
+      final store = await StoreRepository.instance.getMyStore();
+      if (store != null && mounted) {
+        _populateFromStore(store);
+      }
+    } catch (_) {
+      // User does not have a store yet, proceed in creation mode
+    } finally {
+      if (mounted) {
+        setState(() => _isInitialLoading = false);
+      }
     }
   }
 
@@ -214,7 +265,19 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isEditing = widget.existingStore != null;
+    final isEditing = _existingStore != null;
+    final isVerified = _existingStore?.isVerified ?? false;
+
+    if (_isInitialLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Store / Shop Management'),
+        ),
+        body: const Center(
+          child: LoadingIndicator(),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -226,6 +289,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
         listener: (context, state) {
           if (state is StoreSetupSuccess) {
             context.read<MyStoreCubit>().updateStore(state.store);
+            context.read<UserProfileCubit>().getUserProfile();
             HelperUtils.showSnackBarMessage(
               context,
               'Store details saved successfully!',
@@ -249,6 +313,51 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (isVerified) ...[
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.green.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            AppIcons.shieldCheck,
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Verified Official Store',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'This store has been officially verified by the administrator. Store details, media, and location are locked from editing. Please contact support for any changes.',
+                                  style: context.bodySmall.withColor(context.mutedColor),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                  ],
+
                   // Banner Image Uploader
                   Text(
                     'Cover Banner',
@@ -256,7 +365,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                   ),
                   const SizedBox(height: 8),
                   GestureDetector(
-                    onTap: _pickBanner,
+                    onTap: isVerified ? null : _pickBanner,
                     child: Container(
                       height: 140,
                       width: double.infinity,
@@ -275,10 +384,10 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                       clipBehavior: Clip.antiAlias,
                       child: _bannerFile != null
                           ? Image.file(_bannerFile!, fit: BoxFit.cover)
-                          : (widget.existingStore?.banner != null &&
-                                  widget.existingStore!.banner!.isNotEmpty
+                          : (_existingBannerUrl != null &&
+                                  _existingBannerUrl!.isNotEmpty
                               ? CustomImage(
-                                  src: widget.existingStore!.banner!,
+                                  src: _existingBannerUrl!,
                                   fit: BoxFit.cover,
                                 )
                               : Column(
@@ -307,7 +416,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                   ),
                   const SizedBox(height: 8),
                   GestureDetector(
-                    onTap: _pickLogo,
+                    onTap: isVerified ? null : _pickLogo,
                     child: Row(
                       children: [
                         Container(
@@ -326,10 +435,10 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                           clipBehavior: Clip.antiAlias,
                           child: _logoFile != null
                               ? Image.file(_logoFile!, fit: BoxFit.cover)
-                              : (widget.existingStore?.logo != null &&
-                                      widget.existingStore!.logo!.isNotEmpty
+                              : (_existingLogoUrl != null &&
+                                      _existingLogoUrl!.isNotEmpty
                                   ? CustomImage(
-                                      src: widget.existingStore!.logo!,
+                                      src: _existingLogoUrl!,
                                       fit: BoxFit.cover,
                                     )
                                   : Icon(
@@ -344,7 +453,9 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Tap to upload store avatar/logo',
+                                isVerified
+                                    ? 'Official Store Avatar'
+                                    : 'Tap to upload store avatar/logo',
                                 style: context.bodySmall.semiBold,
                               ),
                               Text(
@@ -364,6 +475,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _nameController,
+                    readOnly: isVerified,
                     decoration: _inputDecoration('e.g. Acme Superstore'),
                     validator: (v) =>
                         v == null || v.trim().isEmpty ? 'Please enter store name' : null,
@@ -375,6 +487,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _descController,
+                    readOnly: isVerified,
                     maxLines: 4,
                     decoration: _inputDecoration('Tell customers about your store, products & services...'),
                   ),
@@ -384,7 +497,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                   Text('Store Location *', style: context.bodyMedium.semiBold),
                   const SizedBox(height: 6),
                   GestureDetector(
-                    onTap: _pickLocation,
+                    onTap: isVerified ? null : _pickLocation,
                     child: Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
@@ -406,13 +519,13 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                             child: Text(
                               _selectedLocation?.localizedPath.isNotEmpty == true
                                   ? _selectedLocation!.localizedPath
-                                  : (widget.existingStore?.address ?? 'Select store location'),
+                                  : (_existingStore?.address ?? 'Select store location'),
                               style: context.bodyMedium,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const Icon(AppIcons.caretRight, size: 16),
+                          if (!isVerified) const Icon(AppIcons.caretRight, size: 16),
                         ],
                       ),
                     ),
@@ -424,6 +537,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _addressController,
+                    readOnly: isVerified,
                     decoration: _inputDecoration('Street, building number, landmark...'),
                   ),
                   const SizedBox(height: 16),
@@ -439,6 +553,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _contactController,
+                              readOnly: isVerified,
                               keyboardType: TextInputType.phone,
                               decoration: _inputDecoration('e.g. 9876543210'),
                             ),
@@ -454,6 +569,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _emailController,
+                              readOnly: isVerified,
                               keyboardType: TextInputType.emailAddress,
                               decoration: _inputDecoration('store@example.com'),
                             ),
@@ -475,6 +591,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _websiteController,
+                              readOnly: isVerified,
                               decoration: _inputDecoration('https://...'),
                             ),
                           ],
@@ -489,6 +606,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _taxNumberController,
+                              readOnly: isVerified,
                               decoration: _inputDecoration('e.g. TAX-12345'),
                             ),
                           ],
@@ -509,6 +627,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _openingTimeController,
+                              readOnly: isVerified,
                               decoration: _inputDecoration('09:00'),
                             ),
                           ],
@@ -523,6 +642,7 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _closingTimeController,
+                              readOnly: isVerified,
                               decoration: _inputDecoration('20:00'),
                             ),
                           ],
@@ -552,34 +672,40 @@ class _StoreSetupScreenState extends State<StoreSetupScreen> {
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           fontSize: 12,
                         ),
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _selectedDays.add(day);
-                            } else {
-                              _selectedDays.remove(day);
-                            }
-                          });
-                        },
+                        onSelected: isVerified
+                            ? null
+                            : (selected) {
+                                setState(() {
+                                  if (selected) {
+                                    _selectedDays.add(day);
+                                  } else {
+                                    _selectedDays.remove(day);
+                                  }
+                                });
+                              },
                       );
                     }).toList(),
                   ),
                   const SizedBox(height: 30),
 
                   // Save / Submit Button
-                  AppButton(
-                    variant: AppButtonVariant.filled,
-                    onPressed: isLoading ? null : _submit,
-                    title: isEditing ? 'Save Changes' : 'Create Store',
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: LoadingIndicator(),
-                          )
-                        : null,
-                  ),
-                  const SizedBox(height: 20),
+                  if (!isVerified) ...[
+                    AppButton(
+                      variant: AppButtonVariant.filled,
+                      onPressed: isLoading ? null : _submit,
+                      title: isLoading
+                          ? null
+                          : (isEditing ? 'Save Changes' : 'Create Store'),
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: LoadingIndicator(),
+                            )
+                          : null,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ],
               ),
             ),
