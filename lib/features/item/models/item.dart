@@ -34,6 +34,11 @@ base class Item {
         canonical: json['description'] as String,
         translated: json['translated_item']?['description'] as String?,
       ),
+      formattedDescription = LocalizedString(
+        canonical: (json['formatted_description'] ?? json['description']) as String? ?? '',
+        translated: (json['translated_item']?['formatted_description'] ?? json['translated_item']?['description']) as String?,
+      ),
+      descriptionJson = json['description_json'] as String?,
       address = LocalizedString(
         canonical: json['address'] as String,
         translated: json['translated_item']?['address'] as String?,
@@ -92,6 +97,8 @@ base class Item {
   final AdItemType type;
   final LocalizedString name;
   final LocalizedString description;
+  final LocalizedString formattedDescription;
+  final String? descriptionJson;
   final LocalizedString address;
   final Category category;
   final String? price;

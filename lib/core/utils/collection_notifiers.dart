@@ -122,6 +122,10 @@ class ListNotifier<T> extends ChangeNotifier {
   T operator [](int index) {
     return _values[index];
   }
+
+  void operator []=(int index, T item) {
+    replaceAt(index, item);
+  }
 }
 
 class MapNotifier<K, V> extends ChangeNotifier {

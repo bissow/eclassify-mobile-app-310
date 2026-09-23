@@ -13,6 +13,9 @@ abstract final class AppIcons {
   static const IconData arrowRight = PhosphorIcons.arrowRight;
   static const IconData arrowsClockwise = PhosphorIcons.arrowsClockwise;
   static const IconData arrowClockwise = PhosphorIcons.arrowClockwise;
+  static const IconData arrowCounterClockwise = PhosphorIcons.arrowCounterClockwise;
+  static const IconData arrowsHorizontal = PhosphorIcons.arrowsHorizontal;
+  static const IconData arrowsVertical = PhosphorIcons.arrowsVertical;
   static const IconData caretDown = PhosphorIcons.caretDown;
   static const IconData caretLeft = PhosphorIcons.caretLeft;
   static const IconData caretRight = PhosphorIcons.caretRight;
@@ -134,5 +137,6 @@ abstract final class AppIcons {
   static const IconData fire = PhosphorIcons.fire;
   static const IconData fireFill = PhosphorIcons.fireFill;
   static const IconData qrCode = PhosphorIcons.qrCode;
+  static const IconData crop = PhosphorIcons.crop;
 }
 

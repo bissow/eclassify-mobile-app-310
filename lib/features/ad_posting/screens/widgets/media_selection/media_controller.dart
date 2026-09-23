@@ -53,6 +53,15 @@ class MediaController {
     clearError(MediaType.images);
   }
 
+  void updateImageAt(int index, FileResource newImage) {
+    if (index >= 0 && index < images.length) {
+      final oldFile = images[index];
+      images[index] = newImage;
+      removeOversizedImage(oldFile.filePath);
+      clearError(MediaType.images);
+    }
+  }
+
   void removeImageAt(int index) {
     final file = images[index];
     images.removeAt(index);

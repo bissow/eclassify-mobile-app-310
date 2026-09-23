@@ -254,7 +254,9 @@ class _AdDetailsScreenState extends State<AdDetailsScreen>
                       placement: BannerPlacement.above,
                     ),
                     ItemDescriptionWidget(
-                      description: item?.description.localized,
+                      description: (item?.formattedDescription.localized.isNotEmpty ?? false)
+                          ? item?.formattedDescription.localized
+                          : item?.description.localized,
                     ),
                     _divider(),
                     if (!isMyAd)
