@@ -58,16 +58,79 @@ class ItemBasicDetails extends StatelessWidget {
                 ),
             ],
           ),
+          if (item?.primaryActiveSale != null) ...[
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade700,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '🔥 ${item!.primaryActiveSale!.discountType == 'percentage' || (item!.primaryActiveSale!.discountPercentage != null && item!.primaryActiveSale!.discountPercentage.toString().isNotEmpty) ? '${item!.primaryActiveSale!.discountPercentage ?? item!.primaryActiveSale!.discountValue}% OFF' : 'SAVE ${item!.primaryActiveSale!.discountValue}'} SALE',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                if (item!.primaryActiveSale!.remainingStockQuantity > 0 &&
+                    item!.primaryActiveSale!.remainingStockQuantity <= 5)
+                  Text(
+                    '⚡ Only ${item!.primaryActiveSale!.remainingStockQuantity} left!',
+                    style: TextStyle(
+                      color: Colors.amber.shade800,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+              ],
+            ),
+          ],
           Row(
             spacing: 8,
             children: [
               Expanded(
-                child: Text(
-                  price ?? 'contactForPrice'.translate(context),
-                  style: context.titleMedium.copyWith(
-                    color: context.colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Row(
+                  spacing: 8,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    if (item?.primaryActiveSale != null) ...[
+                      Text(
+                        item!.primaryActiveSale!.formattedPromotionalPrice.isNotNullAndNotEmpty
+                            ? item!.primaryActiveSale!.formattedPromotionalPrice!
+                            : '${item!.currency.symbol}${item!.primaryActiveSale!.promotionalPrice}',
+                        style: context.titleMedium.copyWith(
+                          color: context.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (price.isNotNullAndNotEmpty)
+                        Text(
+                          price!,
+                          style: context.bodySmall.copyWith(
+                            decoration: TextDecoration.lineThrough,
+                            color: context.colorScheme.outline,
+                          ),
+                        ),
+                    ] else
+                      Text(
+                        price ?? 'contactForPrice'.translate(context),
+                        style: context.titleMedium.copyWith(
+                          color: context.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                  ],
                 ),
               ),
               if (item case MyItem item) ItemStatusChip(status: item.status),

@@ -79,6 +79,8 @@ class ActivePlanScreen extends StatelessWidget {
                           'featuredAds'.translate(context),
                         SubscriptionPackageType.itemListing =>
                           'adsPackage'.translate(context),
+                        SubscriptionPackageType.promotional =>
+                          'promotionalPackage'.translate(context),
                       },
                     ),
                     separatorBuilder: (context, index) => 30.vGap,

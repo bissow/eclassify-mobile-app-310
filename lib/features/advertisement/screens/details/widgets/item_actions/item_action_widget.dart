@@ -35,13 +35,13 @@ class _ItemActionWidgetState extends State<ItemActionWidget> {
     if (displayItem == null) return const SizedBox.shrink();
 
     return BottomActionBar(
-      child: displayItem.isMyAd
+      child: (displayItem.isMyAd && displayItem is MyItem)
           ? MultiBlocProvider(
               providers: [
                 BlocProvider(create: (_) => RenewItemCubit()),
                 BlocProvider(create: (_) => ItemStatusCubit()),
               ],
-              child: SellerItemActions(item: displayItem as MyItem),
+              child: SellerItemActions(item: displayItem),
             )
           : BuyerItemAction(item: displayItem),
     );

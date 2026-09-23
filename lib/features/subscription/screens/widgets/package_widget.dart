@@ -167,6 +167,13 @@ class _PackageWidgetState extends State<PackageWidget>
             const Divider(),
             InactivePackageWidget(package: widget.package),
           ],
+          if (widget.package.allowsPromotions ||
+              widget.package.allowsDailyBumpUp ||
+              widget.package.allowsTopAd ||
+              widget.package.allowsSpotlight) ...[
+            const Divider(),
+            _buildPromotionalFeatures(context),
+          ],
           if (widget.package.keyPoints.isNotEmpty) ...[
             const Divider(),
             FeaturesAnimatedList(
@@ -178,6 +185,68 @@ class _PackageWidgetState extends State<PackageWidget>
             _buildCategoriesPreview(context),
         ],
       ),
+    );
+  }
+
+  Widget _buildPromotionalFeatures(BuildContext context) {
+    final List<String> promoPerks = [];
+    if (widget.package.allowsPromotions) {
+      final quota = (widget.package.promotionItemLimit != null &&
+              widget.package.promotionItemLimit! > 0)
+          ? ' (${widget.package.promotionItemLimit} ${'items'.translate(context)})'
+          : ' (${'unlimited'.translate(context)})';
+      promoPerks.add('${'salesCampaignPromotionsIncluded'.translate(context)}$quota');
+    }
+    if (widget.package.allowsDailyBumpUp) {
+      final quota = (widget.package.dailyBumpUpLimit != null &&
+              widget.package.dailyBumpUpLimit! > 0)
+          ? ' (${widget.package.dailyBumpUpLimit} ${'times'.translate(context)})'
+          : ' (${'unlimited'.translate(context)})';
+      promoPerks.add('${'dailyBumpUpIncluded'.translate(context)}$quota');
+    }
+    if (widget.package.allowsTopAd) {
+      final quota = (widget.package.topAdLimit != null &&
+              widget.package.topAdLimit! > 0)
+          ? ' (${widget.package.topAdLimit} ${'items'.translate(context)})'
+          : ' (${'unlimited'.translate(context)})';
+      promoPerks.add('${'topAdBoostIncluded'.translate(context)}$quota');
+    }
+    if (widget.package.allowsSpotlight) {
+      final quota = (widget.package.spotlightLimit != null &&
+              widget.package.spotlightLimit! > 0)
+          ? ' (${widget.package.spotlightLimit} ${'items'.translate(context)})'
+          : ' (${'unlimited'.translate(context)})';
+      promoPerks.add('${'spotlightCarouselIncluded'.translate(context)}$quota');
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 6,
+      children: [
+        Text(
+          'promotionsMarketingPerks'.translate(context),
+          style: context.labelMedium.withColor(context.mutedColor),
+        ),
+        ...promoPerks.map(
+          (perk) => Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                AppIcons.checkCircleFill,
+                color: Colors.green,
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  perk,
+                  style: context.labelMedium,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

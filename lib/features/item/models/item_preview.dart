@@ -2,6 +2,8 @@ import 'package:eClassify/features/item/models/ad_item_type.dart';
 import 'package:eClassify/features/item/enums/item_status.dart';
 import 'package:eClassify/core/utils/json_helper.dart';
 
+import 'package:eClassify/features/item/models/active_promotions_summary.dart';
+
 class ItemPreview {
   ItemPreview({
     required this.id,
@@ -13,6 +15,7 @@ class ItemPreview {
     required this.postedAt,
     this.isFeatured = false,
     this.isLiked = false,
+    this.activePromotions,
   });
 
   ItemPreview.fromJson(Json json)
@@ -26,7 +29,10 @@ class ItemPreview {
       address = json['translation']?['address'] as String? ?? '',
       postedAt = DateTime.parse(json['published_at'] as String),
       isFeatured = json['is_feature'] as bool? ?? false,
-      isLiked = json['is_liked'] as bool? ?? false;
+      isLiked = json['is_liked'] as bool? ?? false,
+      activePromotions = json['active_promotions'] != null
+          ? ActivePromotionsSummary.fromJson(json['active_promotions'] as Json?)
+          : null;
 
   final int id;
   final int userId;
@@ -37,6 +43,18 @@ class ItemPreview {
   final DateTime postedAt;
   final bool isFeatured;
   final bool isLiked;
+  final ActivePromotionsSummary? activePromotions;
+
+  ActiveSaleItem? get primaryActiveSale =>
+      (activePromotions?.sales.isNotEmpty ?? false)
+          ? activePromotions!.sales.first
+          : null;
+
+  bool get hasActiveSale => primaryActiveSale != null;
+
+  bool get isSpotlight => activePromotions?.isSpotlight ?? false;
+
+  bool get isTopAd => activePromotions?.isTopAd ?? false;
 }
 
 class MyItemPreview extends ItemPreview {
@@ -54,3 +72,4 @@ class MyItemPreview extends ItemPreview {
   final int views;
   final int likes;
 }
+

@@ -1,4 +1,5 @@
 import 'package:eClassify/app/widgets/bottom_navigation_bar/app_fab.dart';
+import 'package:eClassify/app/routes.dart';
 import 'package:eClassify/core/constants/app_icons.dart';
 import 'package:eClassify/core/extensions/string_extensions.dart';
 import 'package:eClassify/core/utils/collection_notifiers.dart';
@@ -121,8 +122,16 @@ class _MyItemsScreenState extends State<MyItemsScreen>
                   icon: Icon(AppIcons.trash),
                 ),
               ),
+              IconButton(
+                tooltip: 'promotionsPerformance'.translate(context),
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.sellerPromotions);
+                },
+                icon: Icon(AppIcons.trendUp),
+              ),
             ],
           ),
+
           body: TabBarView(
             controller: _tabController,
             children: [

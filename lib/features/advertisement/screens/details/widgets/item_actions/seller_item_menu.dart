@@ -1,4 +1,5 @@
 import 'package:eClassify/core/constants/app_icons.dart';
+import 'package:eClassify/features/item/enums/item_status.dart';
 import 'package:eClassify/core/extensions/string_extensions.dart';
 import 'package:eClassify/core/utils/helper_utils.dart';
 import 'package:eClassify/core/widgets/feedback/loading_overlay.dart';
@@ -19,7 +20,7 @@ class SellerItemMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final item = context.select<FetchItemCubit, MyItem?>(
       (c) => switch (c.state) {
-        FetchItemSuccess(:final item) => item.isMyAd ? item as MyItem : null,
+        FetchItemSuccess(:final item) when item is MyItem => item,
         _ => null,
       },
     );

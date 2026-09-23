@@ -6,6 +6,7 @@ import 'package:eClassify/features/category/models/category.dart';
 import 'package:eClassify/features/custom_fields/enums/custom_field_type.dart';
 import 'package:eClassify/features/item/models/ad_item_type.dart';
 import 'package:eClassify/features/item/models/product_video.dart';
+import 'package:eClassify/features/item/models/active_promotions_summary.dart';
 import 'package:eClassify/features/seller/models/seller.dart';
 
 typedef ItemImage = ({int? id, String url, bool isDefault});
@@ -35,7 +36,7 @@ base class Item {
       ),
       address = LocalizedString(
         canonical: json['address'] as String,
-        translated: json['translated_item']['address'] as String?,
+        translated: json['translated_item']?['address'] as String?,
       ),
       category = Category.fromJson(json['category'] as Json),
       price =
@@ -79,7 +80,11 @@ base class Item {
       hasAlreadyJobApplied = json['is_already_job_applied'] as bool? ?? false,
       hasAlreadyReported = json['is_already_reported'] as bool? ?? false,
       isPurchased = json['is_purchased'] as bool? ?? false,
-      isLiked = json['is_liked'] as bool? ?? false;
+      isLiked = json['is_liked'] as bool? ?? false,
+      activePromotions = json['active_promotions'] != null
+          ? ActivePromotionsSummary.fromJson(json['active_promotions'] as Json?)
+          : null;
+
 
   final int id;
   final String slug;
@@ -109,10 +114,22 @@ base class Item {
   final bool hasAlreadyReported;
   final bool isPurchased;
   final bool isLiked;
+  final ActivePromotionsSummary? activePromotions;
 
   bool get isJobItem => category.isJobCategory;
 
   bool get hasPrice => price != null && price!.toLowerCase() != 'free';
+
+  ActiveSaleItem? get primaryActiveSale =>
+      (activePromotions?.sales.isNotEmpty ?? false)
+          ? activePromotions!.sales.first
+          : null;
+
+  bool get hasActiveSale => primaryActiveSale != null;
+
+  bool get isSpotlight => activePromotions?.isSpotlight ?? false;
+
+  bool get isTopAd => activePromotions?.isTopAd ?? false;
 }
 
 class Coordinates {

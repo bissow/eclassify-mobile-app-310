@@ -24,6 +24,8 @@ class NoPackageAvailableDialog {
         }),
       (SubscriptionPackageType.itemListing, _) =>
         'itemListingSubscriptionNotice'.translate(context),
+      (SubscriptionPackageType.promotional, _) =>
+        'packageRequiredDesc'.translate(context),
     };
 
     showDialog(
@@ -54,6 +56,10 @@ class NoPackageAvailableDialog {
               ),
               (SubscriptionPackageType.itemListing, _) => (
                 route: Routes.subscriptionCategorySelectionScreen,
+                args: null,
+              ),
+              (SubscriptionPackageType.promotional, _) => (
+                route: Routes.subscriptionPackageScreen,
                 args: null,
               ),
             };

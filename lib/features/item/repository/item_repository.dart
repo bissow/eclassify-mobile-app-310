@@ -236,10 +236,10 @@ class ItemRepository {
       // CASE 1: Public API returned item data (Ad is Approved)
       if (data != null && data.isNotEmpty) {
         final currentUserId = AppSession.currentUser?.id;
-        final sellerId = data['user_id']?.toString();
+        final sellerId = (data['user_id'] ?? data['user']?['id'])?.toString();
 
         // Auto-detect ownership: If current user owns this item, fetch full MyItem from getMyItemApi
-        if (currentUserId != null && currentUserId == sellerId) {
+        if (currentUserId != null && currentUserId.toString() == sellerId) {
           final myResponse = await Api.get(
             url: ApiEndpoints.getMyItem,
             queryParameters: queryParameters,

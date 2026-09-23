@@ -126,4 +126,11 @@ abstract final class AppIcons {
   static const IconData storefront = PhosphorIcons.storefront;
   static const IconData storefrontFill = PhosphorIcons.storefrontFill;
   static const IconData squaresFourFill = PhosphorIcons.squaresFourFill;
+  static const IconData percent = PhosphorIcons.percent;
+  static const IconData lightning = PhosphorIcons.lightning;
+  static const IconData lightningFill = PhosphorIcons.lightningFill;
+  static const IconData tag = PhosphorIcons.tag;
+  static const IconData tagFill = PhosphorIcons.tagFill;
+  static const IconData fire = PhosphorIcons.fire;
+  static const IconData fireFill = PhosphorIcons.fireFill;
 }

@@ -7,6 +7,8 @@ import 'package:eClassify/core/utils/helper_utils.dart';
 import 'package:eClassify/core/widgets/images/custom_image.dart';
 import 'package:eClassify/core/widgets/inputs/app_button.dart';
 import 'package:eClassify/core/widgets/surfaces/app_dialog.dart';
+import 'package:eClassify/app/routes.dart';
+import 'package:eClassify/app/session/app_session.dart';
 import 'package:eClassify/features/advertisement/cubits/create_featured_ad_cubit.dart';
 import 'package:eClassify/features/advertisement/cubits/fetch_item_cubit.dart';
 import 'package:eClassify/features/subscription/cubits/user_package_limit_cubit.dart';
@@ -15,10 +17,14 @@ import 'package:eClassify/features/subscription/screens/widgets/no_package_avail
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:eClassify/features/offers/screens/widgets/promote_ad_bottom_sheet.dart';
+import 'package:eClassify/features/offers/screens/widgets/add_to_promotion_bottom_sheet.dart';
+
 class FeatureAdCard extends StatelessWidget {
-  const FeatureAdCard({required this.itemId, super.key});
+  const FeatureAdCard({required this.itemId, this.price = 0.0, super.key});
 
   final int itemId;
+  final double price;
 
   Future<bool?> _showConfirmationDialog(BuildContext context) async {
     return showDialog<bool>(
@@ -39,6 +45,33 @@ class FeatureAdCard extends StatelessWidget {
           onNegativeTapped: () => Navigator.of(context).pop(false),
           positiveButtonLabel: 'yes'.translate(context),
           onPositiveTapped: () => Navigator.of(context).pop(true),
+        );
+      },
+    );
+  }
+
+  void _showVerificationRequiredDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AppDialog(
+          title: Text(
+            'verificationRequiredTitle'.translate(context),
+            style: context.titleMedium,
+            textAlign: TextAlign.center,
+          ),
+          content: Text(
+            'verificationRequiredDesc'.translate(context),
+            textAlign: TextAlign.center,
+            style: context.bodyMedium,
+          ),
+          negativeButtonLabel: 'cancel'.translate(context),
+          onNegativeTapped: () => Navigator.of(context).pop(),
+          positiveButtonLabel: 'verifyNow'.translate(context),
+          onPositiveTapped: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed(Routes.verification);
+          },
         );
       },
     );
@@ -89,37 +122,83 @@ class FeatureAdCard extends StatelessWidget {
         ),
         color: context.colorScheme.primary.withValues(alpha: .1),
         child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Row(
-            spacing: 16,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomImage(
-                src: AppAssets.illustrators.createAdd,
-                size: Size(64, 76),
+              Row(
+                spacing: 16,
+                children: [
+                  CustomImage(
+                    src: AppAssets.illustrators.createAdd,
+                    size: const Size(54, 64),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'boostYourAd'.translate(context),
+                          style: context.titleMedium.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'featureAdDescription'.translate(context),
+                          style: context.bodySmall.copyWith(color: context.colorScheme.onSurface.withValues(alpha: 0.7)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 16,
-                  children: [
-                    Text(
-                      'featureAdDescription'.translate(context),
-                      style: context.titleMedium,
-                    ),
-                    AppButton(
-                      variant: AppButtonVariant.filled,
-                      size: AppButtonSize.small,
-                      title: 'createFeaturedAd',
-                      onPressed: () {
-                        context
-                            .read<UserPackageLimitCubit>()
-                            .fetchUserPackageLimit(
-                              packageType: SubscriptionPackageType.featuredAds,
-                            );
-                      },
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  AppButton(
+                    variant: AppButtonVariant.filled,
+                    size: AppButtonSize.small,
+                    title: 'promoteAd'.translate(context),
+                    onPressed: () {
+                      final isVerified = AppSession.currentUser?.isVerified ?? false;
+                      if (!isVerified) {
+                        _showVerificationRequiredDialog(context);
+                        return;
+                      }
+                      PromoteAdBottomSheet.show(context, itemId: itemId);
+                    },
+                  ),
+                  AppButton(
+                    variant: AppButtonVariant.outlined,
+                    size: AppButtonSize.small,
+                    title: 'joinSale'.translate(context),
+                    onPressed: () {
+                      final isVerified = AppSession.currentUser?.isVerified ?? false;
+                      if (!isVerified) {
+                        _showVerificationRequiredDialog(context);
+                        return;
+                      }
+                      AddToPromotionBottomSheet.show(
+                        context,
+                        itemId: itemId,
+                        originalPrice: price,
+                      );
+                    },
+                  ),
+                  AppButton(
+                    variant: AppButtonVariant.outlined,
+                    size: AppButtonSize.small,
+                    title: 'createFeaturedAd'.translate(context),
+                    onPressed: () {
+                      context
+                          .read<UserPackageLimitCubit>()
+                          .fetchUserPackageLimit(
+                            packageType: SubscriptionPackageType.featuredAds,
+                          );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

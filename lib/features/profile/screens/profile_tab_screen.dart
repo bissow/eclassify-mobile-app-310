@@ -70,6 +70,11 @@ class _ProfileTabScreenState extends State<ProfileTabScreen>
       MenuSection(
         items: [
           MenuItem(
+            icon: AppIcons.fireFill,
+            title: 'offerZone',
+            action: ScreenPushAction(route: Routes.offers),
+          ),
+          MenuItem(
             icon: AppIcons.storefront,
             title: 'nearbyStores',
             action: ScreenPushAction(route: Routes.nearbyStores),
@@ -96,8 +101,18 @@ class _ProfileTabScreenState extends State<ProfileTabScreen>
                 },
               ),
             ),
+          if (isAuthenticated)
+            MenuItem(
+              icon: AppIcons.lightningFill,
+              title: 'promotionsAndSales',
+              action: ScreenPushAction(
+                route: Routes.sellerPromotions,
+                guarded: true,
+              ),
+            ),
         ],
       ),
+
       MenuSection(
         items: [
           MenuItem(

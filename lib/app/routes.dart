@@ -53,6 +53,8 @@ import 'package:eClassify/features/verification/screens/verification_screen.dart
 import 'package:eClassify/features/store/screens/nearby_stores_screen.dart';
 import 'package:eClassify/features/store/screens/store_details_screen.dart';
 import 'package:eClassify/features/store/screens/store_setup_screen.dart';
+import 'package:eClassify/features/offers/screens/offers_screen.dart';
+import 'package:eClassify/features/offers/screens/seller_promotions_screen.dart';
 import 'package:flutter/material.dart';
 
 /// Class containing all route names and navigation logic
@@ -147,12 +149,21 @@ class Routes {
   static const String storeDetails = '/storeDetails';
   static const String storeSetup = '/storeSetup';
 
+  /// Offers & Promotions Routes
+  static const String offers = '/offers';
+  static const String sellerPromotions = '/sellerPromotions';
+
   /// Generates routes based on the provided settings
   static Route onGenerateRouted(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case splash:
         return SplashScreen.route(routeSettings);
+      case offers:
+        return OffersScreen.route(routeSettings);
+      case sellerPromotions:
+        return SellerPromotionsScreen.route(routeSettings);
       case nearbyStores:
+
         return NearbyStoresScreen.route(routeSettings);
       case storeDetails:
         return StoreDetailsScreen.route(routeSettings);

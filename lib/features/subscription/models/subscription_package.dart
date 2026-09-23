@@ -4,14 +4,18 @@ import 'package:flutter/foundation.dart';
 
 enum SubscriptionPackageType {
   featuredAds('advertisement'),
-  itemListing('item_listing');
+  itemListing('item_listing'),
+  promotional('promotional');
 
   const SubscriptionPackageType(this.label);
 
   final String label;
 
   static SubscriptionPackageType parse(String key) =>
-      values.firstWhere((element) => element.label == key);
+      values.firstWhere(
+        (element) => element.label == key,
+        orElse: () => SubscriptionPackageType.itemListing,
+      );
 }
 
 @immutable
@@ -46,7 +50,15 @@ class SubscriptionPackage {
       ),
       type = SubscriptionPackageType.parse(json['type'] as String),
       isGlobal = (json['is_global'] as int?) == 1,
-      isVideoAdAllowed = (json['is_reel_allowed'] as int?) == 1;
+      isVideoAdAllowed = (json['is_reel_allowed'] as int?) == 1,
+      allowsPromotions = (json['allows_promotions'] == 1 || json['allows_promotions'] == true || json['type'] == 'promotional'),
+      promotionItemLimit = json['promotion_item_limit'] as int?,
+      allowsDailyBumpUp = (json['allows_daily_bump_up'] == 1 || json['allows_daily_bump_up'] == true),
+      dailyBumpUpLimit = json['daily_bump_up_limit'] as int?,
+      allowsTopAd = (json['allows_top_ad'] == 1 || json['allows_top_ad'] == true),
+      topAdLimit = json['top_ad_limit'] as int?,
+      allowsSpotlight = (json['allows_spotlight'] == 1 || json['allows_spotlight'] == true),
+      spotlightLimit = json['spotlight_limit'] as int?;
 
   bool get hasUnlimitedItem => itemLimit == 'unlimited';
 
@@ -78,6 +90,14 @@ class SubscriptionPackage {
   final SubscriptionPackageType type;
   final bool isGlobal;
   final bool isVideoAdAllowed;
+  final bool allowsPromotions;
+  final int? promotionItemLimit;
+  final bool allowsDailyBumpUp;
+  final int? dailyBumpUpLimit;
+  final bool allowsTopAd;
+  final int? topAdLimit;
+  final bool allowsSpotlight;
+  final int? spotlightLimit;
 
   @override
   bool operator ==(Object other) =>

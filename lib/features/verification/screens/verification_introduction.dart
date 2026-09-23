@@ -8,6 +8,7 @@ import 'package:eClassify/core/constants/constant.dart';
 import 'package:eClassify/core/extensions/number_extensions.dart';
 import 'package:eClassify/core/extensions/string_extensions.dart';
 import 'package:eClassify/core/widgets/layout/app_scaffold.dart';
+import 'package:eClassify/app/session/app_session.dart';
 import 'package:flutter/material.dart';
 
 class VerificationIntroductionScreen extends StatelessWidget {
@@ -22,6 +23,11 @@ class VerificationIntroductionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (AppSession.currentUser?.isVerified == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed(Routes.verification);
+      });
+    }
     return AppScaffold(
       body: Padding(
         padding: Constant.pagePadding.copyWith(top: kToolbarHeight),

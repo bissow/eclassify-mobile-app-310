@@ -131,6 +131,7 @@ class _VerificationCardUIResolver {
         color: Colors.amber,
         title: 'verificationInReviewTitle',
         subtitle: 'verificationInReviewSubtitle',
+        buttonTitle: 'checkVerificationStatus',
       ),
       VerificationRequestStatus.rejected => _VerificationCardUIConfig(
         leadingIcon: AppIcons.sealWarning,

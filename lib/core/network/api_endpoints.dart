@@ -129,6 +129,29 @@ class ApiEndpoints {
   static const String getMyStore = "get-my-store";
   static const String toggleStoreStatus = "toggle-store-status";
 
+  // ==================== Offers & Campaigns ====================
+  static const String getOffersCampaigns = "offers/campaigns";
+  static const String getOffersCampaignDetail = "offers/campaign-detail";
+  static const String getOffersPromotions = "offers/promotions";
+  static const String getOffersPromotionDetail = "offers/promotion-detail";
+  static const String getOffersPromotionItems = "offers/promotion-items";
+  static const String getOffersFlashSales = "offers/flash-sales";
+  static const String getOffersClearanceSales = "offers/clearance-sales";
+  static const String getOffersDealsOfTheDay = "offers/deals-of-the-day";
+  static const String getOffersSpotlightAds = "offers/spotlight-ads";
+
+  // ==================== Seller Promotions & Boosts ====================
+  static const String getSellerAvailablePromotions = "seller/promotions/available";
+  static const String getSellerMyPromotionItems = "seller/promotions/my-items";
+  static const String addSellerPromotionItem = "seller/promotions/add-item";
+  static const String updateSellerPromotionItem = "seller/promotions/update-item";
+  static const String toggleSellerPromotionItemStatus = "seller/promotions/toggle-item-status";
+  static const String deleteSellerPromotionItem = "seller/promotions/delete-item";
+  static const String getSellerPromotionOptions = "seller/items/promotion-options";
+  static const String promoteSellerAd = "seller/items/promote";
+  static const String getSellerPromotionsAnalytics = "seller/promotions/analytics";
+  static const String getSellerPromotionsHistory = "seller/promotions/history";
+
   // ==================== Misc ====================
   static const String getLanguage = "get-languages";
   static const String getSystemSettings = "get-system-settings";
