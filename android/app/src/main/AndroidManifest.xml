@@ -50,7 +50,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBtCgDDIuhBJTrtLpFd7z16GtC8eGpp2YI" />
+            android:value="${MAPS_API_KEY}" />
 
 
         <activity
@@ -89,6 +89,8 @@
                 <data android:pathPattern="/.*/seller/.*" />
                 <data android:pathPattern="/.*/reel/.*" />
                 <data android:pathPattern="/.*/blogs/.*" />
+                <data android:pathPattern="/.*/store-qr/.*" />
+                <data android:pathPattern="/store-qr/.*" />
             </intent-filter>
 
             <!-- Custom Scheme (Bissow) Intent Filter -->
@@ -105,6 +107,16 @@
                 <data android:pathPattern="/.*/seller/.*" />
                 <data android:pathPattern="/.*/reel/.*" />
                 <data android:pathPattern="/.*/blogs/.*" />
+                <data android:pathPattern="/.*/store-qr/.*" />
+                <data android:pathPattern="/store-qr/.*" />
+            </intent-filter>
+
+            <!-- Custom Scheme (eclassify://store-qr/*) Intent Filter -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="eclassify" android:host="store-qr" />
             </intent-filter>
 
 

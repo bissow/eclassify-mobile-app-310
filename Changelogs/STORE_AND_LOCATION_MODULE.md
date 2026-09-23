@@ -137,3 +137,31 @@ This update introduces full Store / Shop & Geolocation Discovery support to the 
 4. **My Store Edit State Pre-population**: Fixed issue where clicking "My Store" after creating a store opened a blank form instead of populating existing store details for editing.
 5. **Verified Store Protection**: Added official verified banner badge and locked all form inputs to `readOnly`, disabled image/location pickers, and hid the save button when `isVerified == true`.
 6. **Localization**: Added full set of store-related translation keys to `assets/languages/language.json`.
+
+---
+
+## 4. Updates & Bug Fixes (Store Detail Page)
+
+### 4.1 Fixed Null Subtype Error on Store Detail Page Navigation
+- **Problem**: Navigating to a store detail page (`StoreDetailsScreen`) by tapping a store name from Nearby Stores failed with:
+  ```
+  Unhandled Exception: type 'Null' is not a subtype of type 'String'
+  #0 new Item.fromJson (package:eClassify/features/item/models/item.dart:28:38)
+  #8 StoreRepository.getStoreDetail (package:eClassify/features/store/repository/store_repository.dart:102:32)
+  ```
+  Backend endpoint `GET /api/get-store-detail` returns lightweight catalog items (without detailed relations like `currency`, full `category`, `user`, coordinates, or `item_type`), whereas `StoreRepository.getStoreDetail()` attempted to parse them into full `Item` models, triggering type cast errors when null-checking non-nullable fields.
+- **Solution**:
+  - **`lib/features/store/repository/store_repository.dart`**:
+    - Updated return type of `getStoreDetail()` to `List<ItemPreview>` and parsed `rawItems` using `ItemPreview.fromJson`.
+    - Removed unused `Item` import.
+  - **`lib/features/store/cubits/store_details_cubit.dart`**:
+    - Updated `StoreDetailsSuccess` state to hold `List<ItemPreview> items`.
+  - **`lib/features/store/screens/store_details_screen.dart`**:
+    - Updated `_buildProductsTab` to accept `List<ItemPreview> items`.
+    - Passed each `ItemPreview` directly to `ItemCard.grid(item: item, ...)` without manual re-instantiation.
+  - **`lib/features/item/models/ad_item_type.dart`**:
+    - Made `AdItemType.fromName(String? name)` accept nullable strings and default safely to `AdItemType.regularAd`.
+  - **`lib/features/item/models/item.dart` & `lib/features/item/models/item_preview.dart`**:
+    - Added null-safe fallbacks for `item_type`, `user_id`, `name`, `address`, and `published_at`.
+  - **`eclassify-backend/app/Http/Resources/ItemApiResource.php`**:
+    - Attached `'item_type' => $item->item_type ?? 'normal'` to collection item representations.

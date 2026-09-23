@@ -65,6 +65,8 @@ android {
         multiDexEnabled = true
         versionCode = flutterVersionCode.toInt()
         versionName = flutterVersionName
+        manifestPlaceholders["applicationName"] = "android.app.Application"
+        manifestPlaceholders["MAPS_API_KEY"] = localProperties.getProperty("MAPS_API_KEY") ?: ""
     }
 
     signingConfigs {

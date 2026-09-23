@@ -75,9 +75,17 @@ class _DeepLinkListenerState extends State<DeepLinkListener> {
           arguments: {'slug': slug},
         );
         break;
+      case StoreQrDeepLink(:final token):
+        Navigator.pushNamed(
+          context,
+          Routes.sellerStoreQr,
+          arguments: {'identifier': token},
+        );
+        break;
       default:
     }
   }
+
 
   @override
   Widget build(BuildContext context) => widget.child;

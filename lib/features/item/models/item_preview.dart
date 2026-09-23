@@ -20,14 +20,18 @@ class ItemPreview {
 
   ItemPreview.fromJson(Json json)
     : id = json['id'] as int,
-      userId = json['user_id'] as int,
+      userId = json['user_id'] as int? ?? 0,
       image = json['image'] as String? ?? '',
       price =
           (json['formatted_price'] ?? json['formatted_salary_range'])
               as String?,
-      name = json['translation']?['name'] as String,
-      address = json['translation']?['address'] as String? ?? '',
-      postedAt = DateTime.parse(json['published_at'] as String),
+      name = (json['translation']?['name'] ?? json['name'] ?? '') as String,
+      address =
+          (json['translation']?['address'] ?? json['address'] ?? '') as String,
+      postedAt = json['published_at'] != null
+          ? (DateTime.tryParse(json['published_at'].toString()) ??
+              DateTime.now())
+          : DateTime.now(),
       isFeatured = json['is_feature'] as bool? ?? false,
       isLiked = json['is_liked'] as bool? ?? false,
       activePromotions = json['active_promotions'] != null

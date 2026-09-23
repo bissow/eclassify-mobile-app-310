@@ -55,7 +55,11 @@ import 'package:eClassify/features/store/screens/store_details_screen.dart';
 import 'package:eClassify/features/store/screens/store_setup_screen.dart';
 import 'package:eClassify/features/offers/screens/offers_screen.dart';
 import 'package:eClassify/features/offers/screens/seller_promotions_screen.dart';
+import 'package:eClassify/features/store/screens/qr_scanner_screen.dart';
+import 'package:eClassify/features/store/screens/seller_store_qr_screen.dart';
+import 'package:eClassify/features/store/screens/seller_qr_standee_screen.dart';
 import 'package:flutter/material.dart';
+
 
 /// Class containing all route names and navigation logic
 class Routes {
@@ -153,9 +157,20 @@ class Routes {
   static const String offers = '/offers';
   static const String sellerPromotions = '/sellerPromotions';
 
+  /// Seller QR Code & Digital Catalog Routes
+  static const String qrScanner = '/qrScanner';
+  static const String sellerStoreQr = '/sellerStoreQr';
+  static const String sellerQrStandee = '/sellerQrStandee';
+
   /// Generates routes based on the provided settings
   static Route onGenerateRouted(RouteSettings routeSettings) {
     switch (routeSettings.name) {
+      case qrScanner:
+        return QrScannerScreen.route(routeSettings);
+      case sellerStoreQr:
+        return SellerStoreQrScreen.route(routeSettings);
+      case sellerQrStandee:
+        return SellerQrStandeeScreen.route(routeSettings);
       case splash:
         return SplashScreen.route(routeSettings);
       case offers:

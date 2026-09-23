@@ -64,9 +64,33 @@ class HomeSearchField extends StatelessWidget {
                 ),
               ),
             ),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Navigator.pushNamed(context, Routes.qrScanner);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      AppIcons.qrCode,
+                      size: 16,
+                      color: context.colorScheme.primary,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
+
   }
 }

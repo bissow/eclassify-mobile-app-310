@@ -80,7 +80,7 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera for adding ads images and user's profile picture.</string>
+	<string>This app requires access to the camera to scan seller store QR codes, upload ad images, and take profile pictures.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app uses your location to show relevant local ads and listings items. For example, it may display ads for nearby items based on your current location and also when you add or update an item.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

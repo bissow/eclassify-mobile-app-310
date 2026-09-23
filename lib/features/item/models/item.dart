@@ -24,8 +24,8 @@ bool _parseIsDefault(dynamic value) => switch (value) {
 base class Item {
   Item.fromJson(Json json)
     : id = json['id'] as int,
-      slug = json['slug'] as String,
-      type = AdItemType.fromName(json['item_type']),
+      slug = json['slug'] as String? ?? '',
+      type = AdItemType.fromName(json['item_type'] as String?),
       name = LocalizedString(
         canonical: json['name'] as String,
         translated: json['translated_item']?['name'] as String?,
@@ -73,8 +73,9 @@ base class Item {
         json['all_translated_custom_fields'] as List?,
         ItemCustomField.fromJson,
       ),
-      postedAt = DateTime.parse(json['published_at'] as String),
-      isFeatured = json['is_feature'] as bool,
+      postedAt = DateTime.tryParse(json['published_at']?.toString() ?? '') ??
+          DateTime.now(),
+      isFeatured = json['is_feature'] as bool? ?? false,
       hasAlreadyOffered = json['is_already_offered'] as bool? ?? false,
       itemOfferId = json['offer_item_id'] as int?,
       hasAlreadyJobApplied = json['is_already_job_applied'] as bool? ?? false,

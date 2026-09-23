@@ -432,7 +432,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen>
     );
   }
 
-  Widget _buildProductsTab(BuildContext context, List<dynamic> items) {
+  Widget _buildProductsTab(BuildContext context, List<ItemPreview> items) {
     if (items.isEmpty) {
       return Center(
         child: Padding(
@@ -467,23 +467,14 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen>
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
-        final preview = ItemPreview(
-          id: item.id as int,
-          userId: item.seller?.id as int? ?? 0,
-          image: item.image as String? ?? '',
-          price: item.price as String?,
-          name: item.name?.localized ?? item.name?.canonical ?? '',
-          address: item.address?.localized ?? item.address?.canonical ?? '',
-          postedAt: DateTime.now(),
-        );
 
         return ItemCard.grid(
-          item: preview,
+          item: item,
           onTap: () {
             Navigator.pushNamed(
               context,
               Routes.adDetailsScreen,
-              arguments: {'item_id': item.id, 'preview': preview},
+              arguments: {'item_id': item.id, 'preview': item},
             );
           },
         );

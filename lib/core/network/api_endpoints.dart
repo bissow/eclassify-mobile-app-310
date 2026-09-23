@@ -129,6 +129,15 @@ class ApiEndpoints {
   static const String getMyStore = "get-my-store";
   static const String toggleStoreStatus = "toggle-store-status";
 
+  // ==================== Seller QR Code & Digital Catalog ====================
+  static const String sellerQrEligibility = "seller-qr/eligibility";
+  static const String sellerMyQr = "seller-qr/my-qr";
+  static const String sellerQrGenerateOrUpdate = "seller-qr/generate-or-update";
+  static const String sellerQrSettings = "seller-qr/settings";
+  static const String sellerQrStore = "seller-qr/store";
+  static const String sellerQrDownload = "seller-qr/download";
+
+
   // ==================== Offers & Campaigns ====================
   static const String getOffersCampaigns = "offers/campaigns";
   static const String getOffersCampaignDetail = "offers/campaign-detail";

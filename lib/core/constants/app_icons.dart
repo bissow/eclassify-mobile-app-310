@@ -133,4 +133,6 @@ abstract final class AppIcons {
   static const IconData tagFill = PhosphorIcons.tagFill;
   static const IconData fire = PhosphorIcons.fire;
   static const IconData fireFill = PhosphorIcons.fireFill;
+  static const IconData qrCode = PhosphorIcons.qrCode;
 }
+

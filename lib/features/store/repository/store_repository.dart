@@ -4,7 +4,8 @@ import 'package:eClassify/core/models/paginated_result.dart';
 import 'package:eClassify/core/network/api.dart';
 import 'package:eClassify/core/utils/json_helper.dart';
 import 'package:eClassify/core/utils/log.dart';
-import 'package:eClassify/features/item/models/item.dart';
+import 'package:eClassify/features/item/models/item_preview.dart';
+import 'package:eClassify/features/store/models/seller_qr_model.dart';
 import 'package:eClassify/features/store/models/store_model.dart';
 import 'package:path/path.dart' as path;
 
@@ -63,7 +64,7 @@ class StoreRepository {
     }
   }
 
-  Future<({StoreModel store, List<Item> items})> getStoreDetail({
+  Future<({StoreModel store, List<ItemPreview> items})> getStoreDetail({
     String? slug,
     int? id,
     double? latitude,
@@ -99,7 +100,7 @@ class StoreRepository {
 
       final items = JsonHelper.parseList(
         rawItems,
-        Item.fromJson,
+        ItemPreview.fromJson,
       );
 
       return (store: store, items: items);
@@ -186,4 +187,155 @@ class StoreRepository {
       rethrow;
     }
   }
+
+  Future<({
+    StoreModel store,
+    List<ItemPreview> items,
+    LocationWarningModel locationWarning,
+    List<Map<String, dynamic>> categories,
+    int total,
+    SellerQrCodeModel? qrCode,
+  })> getStoreByQr({
+    required String identifier,
+    double? latitude,
+    double? longitude,
+    String? search,
+    int? categoryId,
+    String? sortBy,
+    int page = 1,
+    int limit = 16,
+  }) async {
+    try {
+      final Map<String, dynamic> queryParams = {
+        'page': page,
+        'limit': limit,
+      };
+      if (latitude != null) queryParams['latitude'] = latitude;
+      if (longitude != null) queryParams['longitude'] = longitude;
+      if (search != null && search.isNotEmpty) queryParams['search'] = search;
+      if (categoryId != null) queryParams['category_id'] = categoryId;
+      if (sortBy != null && sortBy.isNotEmpty) queryParams['sort_by'] = sortBy;
+
+      final response = await Api.get(
+        url: '${ApiEndpoints.sellerQrStore}/$identifier',
+        queryParameters: queryParams,
+      );
+
+      final responseData = response['data'] as Map<String, dynamic>;
+      final Map<String, dynamic> storeJson = responseData['store'] is Map
+          ? Map<String, dynamic>.from(responseData['store'] as Map)
+          : {};
+      final store = StoreModel.fromJson(storeJson);
+
+      final locationWarningJson = responseData['location_warning'] is Map
+          ? Map<String, dynamic>.from(responseData['location_warning'] as Map)
+          : <String, dynamic>{};
+      final locationWarning = LocationWarningModel.fromJson(locationWarningJson);
+
+      List rawItems = [];
+      int totalItems = 0;
+      if (responseData['items'] is Map) {
+        final itemsMap = responseData['items'] as Map;
+        final dataField = itemsMap['data'];
+        if (dataField is List) {
+          rawItems = dataField;
+        } else if (dataField is Map) {
+          rawItems = [dataField];
+        }
+        totalItems = itemsMap['total'] as int? ?? rawItems.length;
+      } else if (responseData['items'] is List) {
+        rawItems = responseData['items'] as List;
+        totalItems = rawItems.length;
+      }
+
+      final items = JsonHelper.parseList(
+        rawItems,
+        ItemPreview.fromJson,
+      );
+
+      final List rawCategories = responseData['categories'] as List? ?? [];
+      final categories = rawCategories.map((c) => Map<String, dynamic>.from(c as Map)).toList();
+
+      SellerQrCodeModel? qrCode;
+      if (responseData['qr_code'] is Map) {
+        qrCode = SellerQrCodeModel.fromJson(Map<String, dynamic>.from(responseData['qr_code'] as Map));
+      }
+
+      return (
+        store: store,
+        items: items,
+        locationWarning: locationWarning,
+        categories: categories,
+        total: totalItems,
+        qrCode: qrCode,
+      );
+    } on Exception catch (e, stack) {
+      Log.error('Error in getStoreByQr: $e', e, stack);
+      rethrow;
+    }
+  }
+
+  Future<SellerQrEligibilityModel> checkSellerQrEligibility() async {
+    try {
+      final response = await Api.get(url: ApiEndpoints.sellerQrEligibility);
+      final data = response['data'] as Map<String, dynamic>;
+      return SellerQrEligibilityModel.fromJson(data);
+    } on Exception catch (e, stack) {
+      Log.error('Error in checkSellerQrEligibility: $e', e, stack);
+      rethrow;
+    }
+  }
+
+  Future<SellerQrCodeModel?> getMySellerQr() async {
+    try {
+      final response = await Api.get(url: ApiEndpoints.sellerMyQr);
+      final data = response['data'];
+      if (data is Map<String, dynamic>) {
+        return SellerQrCodeModel.fromJson(data);
+      }
+      return null;
+    } on Exception catch (e, stack) {
+      Log.error('Error in getMySellerQr: $e', e, stack);
+      rethrow;
+    }
+  }
+
+  Future<SellerQrCodeModel> generateOrUpdateSellerQr({
+    String? customSlug,
+    String? customTagline,
+    String? customColor,
+    String? format,
+    String? size,
+    File? centerLogoFile,
+  }) async {
+    try {
+      final Map<String, dynamic> params = {};
+      if (customSlug != null && customSlug.isNotEmpty) {
+        params['custom_slug'] = customSlug;
+      }
+      if (customTagline != null) params['custom_tagline'] = customTagline;
+      if (customColor != null) params['custom_color'] = customColor;
+      if (format != null) params['format'] = format;
+      if (size != null) params['size'] = size;
+
+      if (centerLogoFile != null) {
+        params['center_logo'] = await MultipartFile.fromFile(
+          centerLogoFile.path,
+          filename: path.basename(centerLogoFile.path),
+        );
+      }
+
+      final response = await Api.post(
+        url: ApiEndpoints.sellerQrGenerateOrUpdate,
+        parameter: params,
+      );
+
+      final data = response['data'] as Map<String, dynamic>;
+      return SellerQrCodeModel.fromJson(data);
+    } on Exception catch (e, stack) {
+      Log.error('Error in generateOrUpdateSellerQr: $e', e, stack);
+      rethrow;
+    }
+  }
 }
+

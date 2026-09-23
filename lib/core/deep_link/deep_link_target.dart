@@ -23,10 +23,20 @@ abstract class DeepLinkTarget {
       DeepLinkType.seller => SellerDeepLink(int.parse(path.last)),
       DeepLinkType.reel => ReelDeepLink(int.parse(path.last)),
       DeepLinkType.blogs => BlogDeepLink(path.last),
+      DeepLinkType.storeQr => () {
+        if (link.pathSegments.contains('store-qr')) {
+          final idx = link.pathSegments.indexOf('store-qr');
+          if (idx + 1 < link.pathSegments.length) {
+            return StoreQrDeepLink(link.pathSegments[idx + 1]);
+          }
+        }
+        return StoreQrDeepLink(path.isNotEmpty ? path.last : '');
+      }(),
       null => null,
     };
   }
 }
+
 
 final class ItemDeepLink extends DeepLinkTarget {
   const ItemDeepLink(this.slug);
@@ -75,3 +85,16 @@ final class BlogDeepLink extends DeepLinkTarget {
   @override
   String get value => slug;
 }
+
+final class StoreQrDeepLink extends DeepLinkTarget {
+  const StoreQrDeepLink(this.token);
+
+  final String token;
+
+  @override
+  DeepLinkType get type => DeepLinkType.storeQr;
+
+  @override
+  String get value => token;
+}
+

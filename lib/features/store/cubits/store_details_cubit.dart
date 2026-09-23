@@ -1,5 +1,5 @@
 import 'package:eClassify/core/utils/log.dart';
-import 'package:eClassify/features/item/models/item.dart';
+import 'package:eClassify/features/item/models/item_preview.dart';
 import 'package:eClassify/features/store/models/store_model.dart';
 import 'package:eClassify/features/store/repository/store_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +17,7 @@ class StoreDetailsSuccess extends StoreDetailsState {
   });
 
   final StoreModel store;
-  final List<Item> items;
+  final List<ItemPreview> items;
 }
 
 class StoreDetailsFailure extends StoreDetailsState {

@@ -652,7 +652,8 @@
   "replacePromotionOffer": "Update / Replace Promotional Offer",
   "replacePromotion": "Replace Offer",
   "promotionalOfferUpdated": "Promotional offer updated successfully!",
-  "boostCurrentlyActive": "Currently Active",
   "boostActiveNotice": "This boost is currently active on this advertisement. Promoting again will extend or replace the active boost duration.",
-  "extendOrReplaceBoost": "Extend / Replace Boost"
+  "extendOrReplaceBoost": "Extend / Replace Boost",
+  "storeQrStandee": "Store QR Standee",
+  "scanStoreQr": "Scan Store QR Code"
 }
