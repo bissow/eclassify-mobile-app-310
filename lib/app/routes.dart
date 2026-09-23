@@ -50,6 +50,9 @@ import 'package:eClassify/features/user_profile/screens/user_profile_screen.dart
 import 'package:eClassify/features/verification/screens/verification_completed_screen.dart';
 import 'package:eClassify/features/verification/screens/verification_introduction.dart';
 import 'package:eClassify/features/verification/screens/verification_screen.dart';
+import 'package:eClassify/features/store/screens/nearby_stores_screen.dart';
+import 'package:eClassify/features/store/screens/store_details_screen.dart';
+import 'package:eClassify/features/store/screens/store_setup_screen.dart';
 import 'package:flutter/material.dart';
 
 /// Class containing all route names and navigation logic
@@ -139,11 +142,22 @@ class Routes {
 
   static const String transactionReceipt = '/transactionReceipt';
 
+  /// Store & Shop Discovery Routes
+  static const String nearbyStores = '/nearbyStores';
+  static const String storeDetails = '/storeDetails';
+  static const String storeSetup = '/storeSetup';
+
   /// Generates routes based on the provided settings
   static Route onGenerateRouted(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case splash:
         return SplashScreen.route(routeSettings);
+      case nearbyStores:
+        return NearbyStoresScreen.route(routeSettings);
+      case storeDetails:
+        return StoreDetailsScreen.route(routeSettings);
+      case storeSetup:
+        return StoreSetupScreen.route(routeSettings);
       case onboarding:
         return OnboardingScreen.route(routeSettings);
       case main:

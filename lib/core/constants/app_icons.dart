@@ -123,5 +123,7 @@ abstract final class AppIcons {
   static const IconData squareSplitVertical = PhosphorIcons.squareSplitVertical;
   static const IconData squareSplitVerticalFill =
       PhosphorIcons.squareSplitVerticalFill;
+  static const IconData storefront = PhosphorIcons.storefront;
+  static const IconData storefrontFill = PhosphorIcons.storefrontFill;
   static const IconData squaresFourFill = PhosphorIcons.squaresFourFill;
 }

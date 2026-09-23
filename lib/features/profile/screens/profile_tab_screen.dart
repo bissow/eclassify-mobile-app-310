@@ -58,6 +58,24 @@ class _ProfileTabScreenState extends State<ProfileTabScreen>
       MenuSection(
         items: [
           MenuItem(
+            icon: AppIcons.storefront,
+            title: 'nearbyStores',
+            action: ScreenPushAction(route: Routes.nearbyStores),
+          ),
+          if (isAuthenticated)
+            MenuItem(
+              icon: AppIcons.storefrontFill,
+              title: 'myStore',
+              action: ScreenPushAction(
+                route: Routes.storeSetup,
+                guarded: true,
+              ),
+            ),
+        ],
+      ),
+      MenuSection(
+        items: [
+          MenuItem(
             icon: AppIcons.sketchLogo,
             title: 'subscription',
             action: CustomAction(

@@ -121,6 +121,14 @@ class ApiEndpoints {
   static const String getLikedReels = "get-liked-reels";
   static const String manageReelLike = "manage-reel-like";
 
+  // ==================== Stores & Nearby Sellers ====================
+  static const String getStores = "get-stores";
+  static const String getStoreDetail = "get-store-detail";
+  static const String getStoreSlugs = "get-store-slugs";
+  static const String setupStore = "setup-store";
+  static const String getMyStore = "get-my-store";
+  static const String toggleStoreStatus = "toggle-store-status";
+
   // ==================== Misc ====================
   static const String getLanguage = "get-languages";
   static const String getSystemSettings = "get-system-settings";
