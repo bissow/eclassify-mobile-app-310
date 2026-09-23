@@ -28,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.eclassify.wrteam"
+    namespace = "com.bissow.app"
     compileSdk = 37
     ndkVersion = "28.2.13676358"
 
@@ -44,7 +44,7 @@ android {
     applicationVariants.all {
         outputs.all {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            val appName = "eClassify"
+            val appName = "Bissow"
             val versionName = flutter.versionName
             var abiSuffix = ""
             if (output.outputFileName.contains("v7a")) {
@@ -59,7 +59,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.eclassify.wrteam"
+        applicationId = "com.bissow.app"
         minSdk = 24
         targetSdk = 36
         multiDexEnabled = true

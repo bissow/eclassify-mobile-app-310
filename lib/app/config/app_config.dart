@@ -3,14 +3,14 @@ import 'package:eClassify/features/location/models/leaf_location.dart';
 
 class AppConfig {
   /// Used in SplashScreen to display application name under splash logo
-  static const String applicationName = 'eClassify';
+  static const String applicationName = 'Bissow';
 
   /// DO NOT ADD "/" AT THE END OF DOMAINS ///
   /// Admin Panel URL
-  static const String hostUrl = "https://eclassify.wrteam.me";
+  static const String hostUrl = "https://backend.bissow.com";
 
   /// Website URL to generate share links
-  static const String shareDomain = "https://eclassifyweb.wrteam.me";
+  static const String shareDomain = "https://bissow.com";
 
   /// Default location to be used when App is unable to fetch current location
   static final LeafLocation defaultLocation = LeafLocation.global();

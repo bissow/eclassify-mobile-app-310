@@ -1,4 +1,4 @@
-package com.eclassify.wrteam
+package com.bissow.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

@@ -108,6 +108,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   rename: ^3.0.0
+  # Subhankar Added for change app icons [configuration is in a separate file (e.g., flutter_launcher_icons.yaml)]
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true

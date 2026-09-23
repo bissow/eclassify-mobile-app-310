@@ -1,10 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.eclassify.wrteam">
-    <!--
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    -->
+    package="com.bissow.app">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -46,8 +41,8 @@
         android:name="${applicationName}"
         android:allowBackup="false"
         android:fullBackupOnly="false"
-        android:icon="@mipmap/ic_launcher"
-        android:label="eClassify"
+        android:icon="@mipmap/launcher_icon"
+        android:label="Bissow"
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
@@ -89,14 +84,14 @@
 
                 <data
                     android:scheme="https"
-                    android:host="eclassifyweb.wrteam.me" />
+                    android:host="bissow.com" />
                 <data android:pathPattern="/.*/ad-details/.*" />
                 <data android:pathPattern="/.*/seller/.*" />
                 <data android:pathPattern="/.*/reel/.*" />
                 <data android:pathPattern="/.*/blogs/.*" />
             </intent-filter>
 
-            <!-- Custom Scheme (eclassify) Intent Filter -->
+            <!-- Custom Scheme (Bissow) Intent Filter -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -104,8 +99,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="eclassify"
-                    android:host="eclassifyweb.wrteam.me" />
+                    android:scheme="bissow"
+                    android:host="bissow.com" />
                 <data android:pathPattern="/.*/ad-details/.*" />
                 <data android:pathPattern="/.*/seller/.*" />
                 <data android:pathPattern="/.*/reel/.*" />
