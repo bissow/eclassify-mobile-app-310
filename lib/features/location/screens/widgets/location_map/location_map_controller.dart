@@ -1,4 +1,5 @@
-import 'dart:math';
+import 'dart:developer';
+import 'dart:math' hide log;
 
 import 'package:eClassify/app/config/app_config.dart';
 import 'package:eClassify/features/location/models/leaf_location.dart';
@@ -116,16 +117,22 @@ class LocationMapController extends ChangeNotifier {
   }
 
   void onTap(LatLng coordinates) async {
-    _location = await _locationUtility.getLeafLocationFromLatLng(
-      latitude: coordinates.latitude,
-      longitude: coordinates.longitude,
-    );
-    _updatePosition(
-      LatLng(
-        _location.latitude ?? coordinates.latitude,
-        _location.longitude ?? coordinates.longitude,
-      ),
-    );
+    try {
+      _location = await _locationUtility.getLeafLocationFromLatLng(
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+      );
+      _updatePosition(
+        LatLng(
+          _location.latitude ?? coordinates.latitude,
+          _location.longitude ?? coordinates.longitude,
+        ),
+      );
+    } catch (e, stack) {
+      log('Error getting location from coordinates on map tap: $e',
+          name: 'LocationMapController.onTap');
+      log('$stack', name: 'LocationMapController.onTap');
+    }
   }
 
   void _updatePosition(LatLng coordinates) async {

@@ -15,7 +15,7 @@ class SystemRepository {
   Future<SystemSettings> getSystemSettings() async {
     try {
       final response = await Api.get(url: ApiEndpoints.getSystemSettings);
-      return JsonHelper.parseObject(
+      return await JsonHelper.parseObject(
         response['data'] as Json,
         SystemSettings.fromJson,
       );

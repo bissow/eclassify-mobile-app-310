@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:eClassify/app/config/app_config.dart';
@@ -143,34 +144,42 @@ mixin RootLocationResolverMixin<T extends StatefulWidget>
     _shouldFetchLocation = false;
     final location = AppSession.currentLocation;
     if (location == null) {
-      final location = await LocationUtility().getLocation(
-        onPermissionDenied: (permission, isLocationServicesEnabled) async {
-          if (!mounted) return;
-          if (permission == LocationPermission.denied) {
-            _setLocation(AppConfig.defaultLocation);
-          } else {
-            _shouldFetchLocation =
-                permission == LocationPermission.deniedForever;
-            _isDialogActive = true;
-            final didAccept =
-                await LocationDialog.show(
-                  context,
-                  permission: permission,
-                  isLocationServiceEnabled: isLocationServicesEnabled,
-                ) ??
-                false;
-            if (didAccept) {
-              _isDialogActive = false;
-            } else {
-              _shouldFetchLocation = false;
-              _isDialogActive = false;
+      try {
+        final location = await LocationUtility().getLocation(
+          onPermissionDenied: (permission, isLocationServiceEnabled) async {
+            if (!mounted) return;
+            if (permission == LocationPermission.denied) {
               _setLocation(AppConfig.defaultLocation);
+            } else {
+              _shouldFetchLocation =
+                  permission == LocationPermission.deniedForever;
+              _isDialogActive = true;
+              final didAccept =
+                  await LocationDialog.show(
+                    context,
+                    permission: permission,
+                    isLocationServiceEnabled: isLocationServiceEnabled,
+                  ) ??
+                  false;
+              if (didAccept) {
+                _isDialogActive = false;
+              } else {
+                _shouldFetchLocation = false;
+                _isDialogActive = false;
+                _setLocation(AppConfig.defaultLocation);
+              }
             }
-          }
-        },
-      );
-      if (location != null) {
-        _setLocation(location);
+          },
+        );
+        if (location != null) {
+          _setLocation(location);
+        } else {
+          _setLocation(AppConfig.defaultLocation);
+        }
+      } catch (e, stack) {
+        log('Error resolving root location: $e', name: '_getLocation');
+        log('$stack', name: '_getLocation');
+        _setLocation(AppConfig.defaultLocation);
       }
     }
   }

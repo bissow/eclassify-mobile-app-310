@@ -64,9 +64,24 @@ class NotificationUtility {
     return permissionGiven;
   }
 
+  static NotificationActionCallback? _onForegroundNotificationTap;
+
+  /// Top-level or static method required by awesome_notifications
+  /// to handle notification actions in foreground and background.
+  @pragma('vm:entry-point')
+  static Future<void> onActionReceivedMethod(
+    ReceivedAction receivedAction,
+  ) async {
+    if (receivedAction.payload != null) {
+      _onForegroundNotificationTap?.call(receivedAction.payload!);
+    }
+  }
+
   static Future<void> _initializeAwesomeNotification({
     required NotificationActionCallback onForegroundNotificationTap,
   }) async {
+    _onForegroundNotificationTap = onForegroundNotificationTap;
+
     final hasInitialized = await _awesomeInstance.initialize(
       null,
       [
@@ -92,11 +107,7 @@ class NotificationUtility {
     }
 
     _awesomeInstance.setListeners(
-      onActionReceivedMethod: (receivedAction) async {
-        if (receivedAction.payload != null) {
-          onForegroundNotificationTap.call(receivedAction.payload!);
-        }
-      },
+      onActionReceivedMethod: onActionReceivedMethod,
     );
   }
 

@@ -101,7 +101,17 @@ void _setupErrorHandling() {
 
 /// Initializes Firebase with appropriate options
 Future<void> _initializeFirebase() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
+  } catch (e) {
+    if (e is! FirebaseException || e.code != 'duplicate-app') {
+      rethrow;
+    }
+  }
 
   await FirebaseAppCheck.instance.activate(
     providerApple: kDebugMode ? AppleDebugProvider() : AppleAppAttestProvider(),

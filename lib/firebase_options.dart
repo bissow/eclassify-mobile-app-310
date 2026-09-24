@@ -50,11 +50,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '',
-    appId: '',
-    messagingSenderId: '',
-    projectId: '',
-    storageBucket: '',
+    apiKey: 'AIzaSyAVr2RF_W3aAEz0rCy7q-V1J78cFhuwQL8',
+    appId: '1:845338884833:android:8d369774dafacc03c0d5a0',
+    messagingSenderId: '845338884833',
+    projectId: 'eclassify-3800d',
+    storageBucket: 'eclassify-3800d.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

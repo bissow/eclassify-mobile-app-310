@@ -6,8 +6,6 @@ import 'package:eClassify/core/widgets/feedback/loading_overlay.dart';
 import 'package:eClassify/features/advertisement/cubits/fetch_item_cubit.dart';
 import 'package:eClassify/features/advertisement/cubits/item_status_cubit.dart';
 import 'package:eClassify/features/item/cubits/delete_item_cubit.dart';
-import 'package:eClassify/features/item/enums/item_status.dart';
-import 'package:eClassify/features/item/extensions/item_extension.dart';
 import 'package:eClassify/features/item/models/my_item.dart';
 import 'package:eClassify/features/item/screens/widgets/modals/delete_advertisement_dialog.dart';
 import 'package:flutter/material.dart';

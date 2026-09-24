@@ -53,7 +53,7 @@ final class LocationUtility {
 
     if (permissionGiven && locationServiceEnabled) {
       await _getLiveLocation();
-      return location;
+      return location ?? AppSession.currentLocation ?? AppConfig.defaultLocation;
     } else {
       onPermissionDenied?.call(permission, locationServiceEnabled);
     }
@@ -90,10 +90,16 @@ final class LocationUtility {
         shouldFetch = _shouldReFetch(oldCoordinates, newCoordinates);
       }
       if (shouldFetch) {
-        location = await getLeafLocationFromLatLng(
-          latitude: position.latitude,
-          longitude: position.longitude,
-        );
+        try {
+          location = await getLeafLocationFromLatLng(
+            latitude: position.latitude,
+            longitude: position.longitude,
+          );
+        } catch (e, stack) {
+          log('Failed to resolve leaf location: $e', name: '_getLiveLocation');
+          log('$stack', name: '_getLiveLocation');
+          _getPersistedLocation();
+        }
       }
     }
   }

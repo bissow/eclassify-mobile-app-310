@@ -2,6 +2,7 @@ import 'package:eClassify/app/routes.dart';
 import 'package:eClassify/core/constants/app_icons.dart';
 import 'package:eClassify/core/constants/constant.dart';
 import 'package:eClassify/core/extensions/date_extensions.dart';
+import 'package:eClassify/core/extensions/generic_extensions.dart';
 import 'package:eClassify/core/extensions/string_extensions.dart';
 import 'package:eClassify/core/theme/theme_colors.dart';
 import 'package:eClassify/core/theme/theme_extensions.dart';

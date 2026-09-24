@@ -157,7 +157,7 @@ class LocationRepository {
           (response['data']['results'] as List).first,
         );
       } else {
-        return JsonHelper.parseObjectOrNull(
+        return await JsonHelper.parseObjectOrNull(
               response['data'] as Map<String, dynamic>,
               LeafLocation.fromJson,
             ) ??
