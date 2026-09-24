@@ -26,7 +26,7 @@ class SystemSettings {
       ),
       isFreeAdListingEnabled = (json['free_ad_listing'] as String?) == '1',
       otpProvider = OtpProviderType.fromRaw(
-        json['otp_service_provider'] as String,
+        (json['otp_service_provider'] as String?) ?? '',
       ),
       mapProvider = MapProviderType.fromRaw(json['map_provider'] as String),
       defaultCurrency = Currency.fromJson({
